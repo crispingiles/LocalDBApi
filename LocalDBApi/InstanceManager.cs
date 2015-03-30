@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace WBSoft.LocalDBApi
 {
@@ -12,27 +9,42 @@ namespace WBSoft.LocalDBApi
     {
 
         public InstanceManager()
-            : this(new LocalDBBinaryLoader())
+            : this(new LocalDBBinaryLoader(), new LocalDBErrorProvider())
         {
         }
 
-        internal InstanceManager(ILocalDBBinaryLoader localDBBinaryLoader)
+        internal InstanceManager(
+            ILocalDBBinaryLoader localDBBinaryLoader, 
+            ILocalDBErrorProvider localDbErrorProvider)
         {
             this.localDBBinaryLoader = localDBBinaryLoader;
+            localDBErrorProvider = localDbErrorProvider;
         }
 
         private readonly ILocalDBBinaryLoader localDBBinaryLoader;
 
+        private readonly ILocalDBErrorProvider localDBErrorProvider;
+
         public void CreateInstance(string localDBVersion, string instanceName)
         {
             localDBBinaryLoader.LoadVersion(localDBVersion);
-            var exitCode = LocalDBWin32.LocalDBCreateInstance(localDBVersion, instanceName, 0);
-            if (exitCode != 0)
+            var errorCode = LocalDBWin32.LocalDBCreateInstance(localDBVersion, instanceName, 0);
+            if (errorCode != LocalDBReturnCode.S_OK)
             {
-                throw new Exception("" + exitCode);
+                var error = localDBErrorProvider.GetError(errorCode);
+                throw new Exception(string.Format("Error creating LocalDB instance {0}: {1}", instanceName, error.ErrorMessage));
             }
         }
 
-
+        public void DeleteInstance(string instanceName)
+        {
+            localDBBinaryLoader.LoadMostRecentVersion();
+            var errorCode = LocalDBWin32.LocalDBDeleteInstance(instanceName, 0);
+            if (errorCode != LocalDBReturnCode.S_OK)
+            {
+                var error = localDBErrorProvider.GetError(errorCode);
+                throw new Exception(string.Format("Error deleting LocalDB instance {0}: {1}", instanceName, error.ErrorMessage));
+            }
+        }
     }
 }

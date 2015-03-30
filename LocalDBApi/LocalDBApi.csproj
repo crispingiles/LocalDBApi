@@ -41,9 +41,12 @@
   <ItemGroup>
     <Compile Include="IInstanceManager.cs" />
     <Compile Include="ILocalDBBinaryLoader.cs" />
+    <Compile Include="ILocalDBErrorProvider.cs" />
     <Compile Include="ILocalDBVersionProvider.cs" />
     <Compile Include="InstanceManager.cs" />
     <Compile Include="LocalDBBinaryLoader.cs" />
+    <Compile Include="LocalDBError.cs" />
+    <Compile Include="LocalDBErrorProvider.cs" />
     <Compile Include="LocalDBReturnCode.cs" />
     <Compile Include="LocalDBVersion.cs" />
     <Compile Include="LocalDBVersionProvider.cs" />
