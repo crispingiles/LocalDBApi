@@ -15,10 +15,10 @@ namespace WBSoft.LocalDBApi
 
         internal InstanceManager(
             ILocalDBBinaryLoader localDBBinaryLoader, 
-            ILocalDBErrorProvider localDbErrorProvider)
+            ILocalDBErrorProvider localDBErrorProvider)
         {
             this.localDBBinaryLoader = localDBBinaryLoader;
-            localDBErrorProvider = localDbErrorProvider;
+            this.localDBErrorProvider = localDBErrorProvider;
         }
 
         private readonly ILocalDBBinaryLoader localDBBinaryLoader;
