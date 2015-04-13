@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace WBSoft.LocalDBApi
 {
@@ -44,6 +45,31 @@ namespace WBSoft.LocalDBApi
             {
                 var error = localDBErrorProvider.GetError(errorCode);
                 throw new Exception(string.Format("Error deleting LocalDB instance {0}: {1}", instanceName, error.ErrorMessage));
+            }
+        }
+
+        public string StartInstance(string instanceName)
+        {
+            localDBBinaryLoader.LoadMostRecentVersion();
+            int connectionStringBufferLength = 1024;
+            var connectionString = new StringBuilder(connectionStringBufferLength);
+            var errorCode = LocalDBWin32.LocalDBStartInstance(instanceName, 0, connectionString, ref connectionStringBufferLength);
+            if (errorCode != LocalDBReturnCode.S_OK)
+            {
+                var error = localDBErrorProvider.GetError(errorCode);
+                throw new Exception(string.Format("Error starting LocalDB instance {0}: {1}", instanceName, error.ErrorMessage));
+            }
+            return connectionString.ToString();
+        }
+
+        public void StopInstance(string instanceName, ShutdownFlag shutdownFlag, TimeSpan timeout)
+        {
+            localDBBinaryLoader.LoadMostRecentVersion();
+            var errorCode = LocalDBWin32.LocalDBStopInstance(instanceName, (int) shutdownFlag, (uint) timeout.TotalSeconds);
+            if (errorCode != LocalDBReturnCode.S_OK)
+            {
+                var error = localDBErrorProvider.GetError(errorCode);
+                throw new Exception(string.Format("Error stopping LocalDB instance {0}: {1}", instanceName, error.ErrorMessage));
             }
         }
     }

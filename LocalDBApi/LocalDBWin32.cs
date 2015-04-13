@@ -29,5 +29,11 @@ namespace WBSoft.LocalDBApi
 
         [DllImport(SqlUserInstanceDllFileName, CharSet=CharSet.Unicode)]
         public static extern int LocalDBDeleteInstance(string pInstanceName, int dwFlags);
+
+        [DllImport(SqlUserInstanceDllFileName, CharSet = CharSet.Unicode)]
+        public static extern int LocalDBStartInstance(string pInstanceName, int dwFlags, [Out] StringBuilder wszSqlConnection, ref int lpcchSqlConnection);
+
+        [DllImport(SqlUserInstanceDllFileName, CharSet = CharSet.Unicode)]
+        public static extern int LocalDBStopInstance(string pInstanceName, int dwFlags, uint ulTimeout);
     }
 }
